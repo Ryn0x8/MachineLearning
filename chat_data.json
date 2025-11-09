@@ -1,0 +1,13 @@
+{
+    "Saral": {
+        "mood": "good",
+        "talkMore": "no"
+    },
+    "Saral_1": {
+        "mood": "good",
+        "talkMore": "yes",
+        "topic": "AI",
+        "description": "Its working principle",
+        "more": "I want to know how it works and process our chats to get results"
+    }
+}
