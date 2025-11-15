@@ -1,0 +1,18 @@
+Sentiment Analysis Data for Agent: ST
+Positive Count: 5
+Negative Count: 4
+Neutral Count: 3
+
+Conversation History:
+I want to kill some body today I am very angry | Sentiment: Negative (Polarity: -0.65)
+My name is saral | Sentiment: Neutral (Polarity: 0.0)
+Are you angry? | Sentiment: Negative (Polarity: -0.5)
+I am very angry today | Sentiment: Negative (Polarity: -0.65)
+Are you happy | Sentiment: Positive (Polarity: 0.8)
+I am going to beat up my friend | Sentiment: Neutral (Polarity: 0.0)
+I want to be a good boy | Sentiment: Positive (Polarity: 0.7)
+I want to kill some body today I am very angry | Sentiment: Negative (Polarity: -0.65)
+Do you want a good hobby | Sentiment: Positive (Polarity: 0.7)
+boy are you happy | Sentiment: Positive (Polarity: 0.8)
+Do you want some candy | Sentiment: Neutral (Polarity: 0.0)
+I am a great boy | Sentiment: Positive (Polarity: 0.8)

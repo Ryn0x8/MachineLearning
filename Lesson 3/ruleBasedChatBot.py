@@ -1,10 +1,12 @@
-import re, random
+import re, random, datetime
 from colorama import Fore
 import colorama
 
 colorama.init(autoreset=True)
 
-print(f"{Fore.GREEN} Hello User! Welcome to the Rule-Based Chat Bot!")
+memory = {
+    "last_topic": None
+}
 
 destinations = {
     "cities": ["New York", "Paris", "Tokyo", "Sydney", "Cairo"],
@@ -18,93 +20,142 @@ jokes = [
     "Why don't skeletons fight each other? They don't have the guts!"
 ]
 
-def normalize_input(inputt):
-    return re.sub(r"\s+", " ", inputt.strip().lower())
+weather_conditions = [
+    "Sunny with clear skies.",
+    "Cloudy with a chance of rain.",
+    "Heavy rainfall expected.",
+    "Thunderstorms approaching!",
+    "Cool and breezy today."
+]
 
-def recommend(category = None):
+news_headlines = [
+    "Global markets show signs of recovery.",
+    "New technological breakthrough shocks the world!",
+    "Scientists discover a new species in the Amazon rainforest.",
+    "Sports update: Underdog team wins championship!",
+    "Space agency announces new lunar mission."
+]
+
+city_timezones = {
+    "new york": -5,
+    "paris": 1,
+    "tokyo": 9,
+    "sydney": 10,
+    "kathmandu": 5.75,
+    "london": 0,
+    "dubai": 4
+}
+
+def normalize_input(text):
+    return re.sub(r"\s+", " ", text.strip().lower())
+
+def match_keywords(user_input, keywords):
+    return any(re.search(rf"\b{kw}\b", user_input) for kw in keywords)
+
+def recommend(category=None):
+    memory["last_topic"] = "recommendation"
     if category is None:
-        print(f"CHATBOT: {Fore.CYAN} Hey User! looking for some travel recommendations? Want me to help?")
-        category = input(f"{Fore.YELLOW} If yes, Please enter the category (cities, beaches, mountains) or enter exit to close\nUser:").strip().lower()
-        category = normalize_input(category)
-        if category == "exit":
-            print(f"CHATBOT: {Fore.CYAN} Goodbye User! Hope to assist you again!")
-            return
-    
+        print(f"{Fore.CYAN}CHATBOT: Looking for travel ideas? Choose cities, beaches, or mountains!")
+        category = normalize_input(input(Fore.YELLOW + "User: "))
     if category in destinations:
         suggestion = random.choice(destinations[category])
-        print(f"CHATBOT: {Fore.CYAN} Hey How about you try visiting {suggestion}?")
-        print(f"CHATBOT: {Fore.CYAN} Did you like it User? (Yes/No)?")
-        feedback = input(f"{Fore.YELLOW} User:").strip().lower()
-        feedback = normalize_input(feedback)
-        if feedback == 'yes':
-            print(f"CHATBOT: {Fore.CYAN} Awesome! Hope you have a great trip to {suggestion}!")
+        print(f"{Fore.CYAN}CHATBOT: How about visiting {suggestion}?")
+        feedback = normalize_input(input(Fore.YELLOW + "Did you like the suggestion? (yes/no): "))
+        if feedback == "yes":
+            print(f"{Fore.GREEN}CHATBOT: Awesome! Have a great trip to {suggestion}!")
         else:
-            print(f"CHATBOT: {Fore.RED} No Worries Let Me suggest you something else for {category}")
+            print(f"{Fore.RED}CHATBOT: No worries! Let me suggest another one.")
             recommend(category)
     else:
-        print(f"CHATBOT: {Fore.RED} Sorry User, I don't have recommendations for that category. Please choose from cities, beaches, or mountains. Lets Start it Over Again")
+        print(f"{Fore.RED}CHATBOT: Invalid category. Restarting recommendation...")
         recommend()
     show_help(True)
 
 def packing_tips():
+    memory["last_topic"] = "packing"
     tips = [
-        "Make a packing list to ensure you don't forget essentials.",
-        "Roll your clothes to save space and reduce wrinkles.",
-        "Pack versatile clothing that can be mixed and matched.",
-        "Don't forget chargers and adapters for your electronics.",
-        "Bring a small first aid kit for emergencies."
+        "Make a packing list to stay organized.",
+        "Roll your clothes to save space.",
+        "Bring versatile clothing.",
+        "Don't forget chargers & adapters!",
+        "Carry a small first-aid kit."
     ]
-    print(f"CHATBOT: {Fore.CYAN} Hey User! Where are you traveling to?")
-    destination = input(f"{Fore.YELLOW} User:").strip()
-    destination = normalize_input(destination)
-    time = input(f"{Fore.CYAN} CHATBOT: Great! How long will you be staying in {destination.title()}?\n{Fore.YELLOW} User:").strip()
-    time = normalize_input(time)
-    print(f"{Fore.CYAN} CHATBOT: Here are some packing tips for your trip to {destination.title()} for {time}:")
-    for idx, tip in enumerate(tips, start=1):
-        print(f"{idx}. {tip}")
-    
-    show_help(repeat=True)
-
-def tell_joke():
-    print(f"CHATBOT: {Fore.CYAN} Here's a joke for you: {random.choice(jokes)}")
+    dest = normalize_input(input(Fore.YELLOW + "Where are you traveling to?\nUser: "))
+    time = normalize_input(input(Fore.YELLOW + f"How long will you stay in {dest.title()}?\nUser: "))
+    print(f"{Fore.CYAN}Here are packing tips for {dest.title()} ({time} stay):")
+    for i, t in enumerate(tips, 1):
+        print(Fore.GREEN + f"{i}. {t}")
     show_help(True)
 
-def show_help(repeat = False):
-    if not repeat:
-        print(f"CHATBOT: Heres a list of everything I can do for you:")
+def tell_joke():
+    memory["last_topic"] = "joke"
+    print(Fore.MAGENTA + "CHATBOT: " + random.choice(jokes))
+    show_help(True)
+
+def weather_report():
+    memory["last_topic"] = "weather"
+    city = normalize_input(input(Fore.YELLOW + "Enter a city for weather info:\nUser: "))
+    report = random.choice(weather_conditions)
+    print(Fore.CYAN + f"CHATBOT: The weather in {city.title()} right now: {report}")
+    show_help(True)
+
+def news_update():
+    memory["last_topic"] = "news"
+    print(Fore.CYAN + "CHATBOT: Here are today's top headlines:")
+    for i in random.sample(news_headlines, 3):
+        print(Fore.GREEN + "• " + i)
+    show_help(True)
+
+def city_time():
+    memory["last_topic"] = "time"
+    city = normalize_input(input(Fore.YELLOW + "Enter a city name:\nUser: "))
+    if city not in city_timezones:
+        print(Fore.RED + "Sorry, I don't know the time for that city.")
     else:
-        print(f"CHATBOT: {Fore.CYAN} Is there anything else I can help you with? Here's what I can do for you again:")
-    print(f"{Fore.YELLOW} 1. Recommend travel destinations (type 'recommend')")
-    print(f"{Fore.YELLOW} 2. Provide packing tips (type 'packing')")
-    print(f"{Fore.YELLOW} 3. Tell a joke (type 'joke')")
-    print(f"{Fore.YELLOW} 4. Exit the chat (type 'exit')")
+        offset = city_timezones[city]
+        utc_now = datetime.datetime.utcnow()
+        local_time = utc_now + datetime.timedelta(hours=offset)
+        print(Fore.CYAN + f"Current time in {city.title()}: {local_time.strftime('%H:%M:%S')}")
+    show_help(True)
+
+def show_help(repeat=False):
+    print(Fore.CYAN + ("Anything else I can help with?" if repeat else "Here’s what I can do:"))
+    print(Fore.YELLOW + """
+1. Travel recommendations → 'recommend'
+2. Packing tips → 'packing'
+3. Tell a joke → 'joke'
+4. Weather info → 'weather'
+5. News updates → 'news'
+6. Local time in cities → 'time'
+7. Exit → 'exit'
+""")
 
 def main():
-    name = input(f"{Fore.YELLOW}CHATBOT: Please enter your name:\nUser:").strip()
-    name = normalize_input(name)
+    name = normalize_input(input(Fore.YELLOW + "CHATBOT: Please enter your name:\nUser: "))
     if not name:
         name = "Traveler"
-    
-    print(f"{Fore.CYAN} CHATBOT: Hello {name.title()}! I'm your Rule-Based Chat Bot here to assist you with travel recommendations, packing tips, and more!")
+    print(Fore.GREEN + f"Hello {name.title()}! I’m your upgraded Rule-Based Chatbot!")
     show_help()
     while True:
-        user_input = input(f"{Fore.YELLOW}{name.title()}:")
-        user_input = normalize_input(user_input)
-        if "recommend" in user_input or "suggest" in user_input:
+        user_input = normalize_input(input(Fore.YELLOW + f"{name.title()}: "))
+        if match_keywords(user_input, ["recommend", "suggest"]):
             recommend()
-        elif "packing" in user_input or "pack" in user_input:
+        elif match_keywords(user_input, ["pack", "packing"]):
             packing_tips()
-        elif "joke" in user_input or "funny" in user_input:
+        elif match_keywords(user_input, ["joke", "funny"]):
             tell_joke()
-        elif "exit" in user_input or "quit" in user_input:
-            print(f"{Fore.CYAN} CHATBOT: Goodbye {name.title()}! Safe travels and hope to chat with you again!")
+        elif match_keywords(user_input, ["weather", "temperature"]):
+            weather_report()
+        elif match_keywords(user_input, ["news", "headline"]):
+            news_update()
+        elif match_keywords(user_input, ["time", "clock"]):
+            city_time()
+        elif match_keywords(user_input, ["exit", "quit"]):
+            print(Fore.CYAN + f"Goodbye {name.title()}! Have a wonderful day.")
             break
         else:
-            print(f"{Fore.RED}CHATBOT: Sorry {name.title()}, I didnt understand your message.")
+            print(Fore.RED + "Sorry, I didn’t understand that.")
             show_help()
 
 if __name__ == "__main__":
     main()
-
-
-
