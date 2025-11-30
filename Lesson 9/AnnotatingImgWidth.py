@@ -15,7 +15,7 @@ cv2.arrowedLine(image_rgb, arrow_ed,arrow_st,(255, 255, 0), 3, tipLength=0.05)
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 height_label_position = (arrow_st[0] - 20, (arrow_st[1] + arrow_ed[1])//2)
-cv2.putText(image_rgb, f"Width: {h}px", height_label_position, font, 1, (255,255, 0), 2, cv2.LINE_AA)
+cv2.putText(image_rgb, f"Width: {w}px", height_label_position, font, 1, (255,255, 0), 2, cv2.LINE_AA)
 
 plt.figure(figsize=(12, 8))
 plt.imshow(image_rgb)
