@@ -23,7 +23,7 @@ def apply_color_filter(image, filter_type):
         filtered_image[:,:,2] = cv2.add(filtered_image[:,:,2], 50)
     
     elif filter_type == "blue_decrease":
-        filtered_image[:,:,0] = cv2.reduce(filtered_image[:,:,0], 50)
+        filtered_image[:,:,0] = cv2.subtract(filtered_image[:,:,0], 50)
         
     return filtered_image
 
