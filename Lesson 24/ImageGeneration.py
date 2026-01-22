@@ -10,8 +10,19 @@ def generate_image(prompt: str) -> Image.Image:
         "Authorization": f"Bearer {HF_API}"
     }
     payload = {
-        "inputs": prompt
+        "inputs": prompt,
+        "parameters": {
+            "width": 512,            
+            "height": 512,          
+            "num_inference_steps": 50, 
+            "guidance_scale": 7.5,   
+            "seed": 42             
+        },
+        "options": {
+            "use_gpu": True          # if your environment supports GPU
+        }
     }
+
     try:
         response = requests.post(API_URL, headers = headers, json = payload, timeout = 30)
         response.raise_for_status()
