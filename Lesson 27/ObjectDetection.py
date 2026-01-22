@@ -3,8 +3,8 @@ from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 from config import HF_API
 
-model = "microsoft/beit-base-finetuned-ade-512-512"
-API = f"https://router.huggingface.co/hf-interface/models/{model}"
+model = "facebook/detr-resnet-50"
+API = f"https://router.huggingface.co/hf-inference/models/{model}"
 ALLOWED, MAX_MB = {'.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.webp'}, 8
 EMOJI = {
   "person":"🧑🏻","car":"🚗","truck":"🚚","bus":"🚌","bicycle":"🚲","motorcycle":"🏍️",
@@ -83,7 +83,10 @@ def draw(img, dets, thr = 0.5):
         color = tuple(random.randint(80, 256) for _ in range(3))
         d.rectangle([x1,y1,x2,y2], outline = color, width = 4)
         txt = f"{EMOJI.get(lab.lower(), '')} {lab}: {s*100:.1f}%"
-        tw,th = d.textsize(txt, font = f), f.size+6
+        bbox = d.textbbox((0,0), txt, font=f)   
+        tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1] + 6
+ 
+        f.size+6
         d.rectangle([(x1+4, max(0, y1-th)), (x1+tw + 8, y1)], fill = color)
         d.text((x1+4, y1-th+3), txt, font = f, fill = (0,0,0))
         counts[lab] = counts.get(lab, 0) + 1
