@@ -19,7 +19,7 @@ def generate_image(prompt: str) -> Image.Image:
             "seed": 42             
         },
         "options": {
-            "use_gpu": True          # if your environment supports GPU
+            "use_gpu": True     
         }
     }
 
