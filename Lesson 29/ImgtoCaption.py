@@ -1,4 +1,3 @@
-from config import HF_API
 from PIL import Image
 import os
 from colorama import Fore, init, Style
@@ -67,7 +66,8 @@ def main():
         "num_beams": NUM_BEAMS,
         "repetition_penalty": 1.2,
         "early_stopping": True,
-        "no_repeat_ngram_size": 2
+        "no_repeat_ngram_size": 2,
+        "min_length": 50
     }
     full_texts = query_hf_api(image_paths, FULL_GEN_KWARGS)
 
